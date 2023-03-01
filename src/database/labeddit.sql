@@ -26,6 +26,7 @@ CREATE TABLE comments (
     comment TEXT NOT NULL,
     likes INTEGER DEFAULT (0) NOT NULL,
     dislikes INTEGER DEFAULT (0) NOT NULL,
+    created_at TEXT DEFAULT (DATETIME()) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,

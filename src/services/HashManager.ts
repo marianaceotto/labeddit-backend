@@ -16,3 +16,5 @@ export class HashManager {
         return bcrypt.compare(plaintext, hash)
     }
 }
+
+
