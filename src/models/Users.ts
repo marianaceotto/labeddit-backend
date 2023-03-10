@@ -4,7 +4,7 @@ import { UsersDB, UsersModels } from "../types"
 export class Users{
     constructor (
     private id: string,
-    private apelido: string,
+    private name: string,
     private email: string,
     private password: string,
     private createdAt : string, 
@@ -19,12 +19,12 @@ export class Users{
         this.id = value
     }
 
-    public getApelido(): string {
-        return this.apelido
+    public getName(): string {
+        return this.name
     }
 
-    public setApelido(value: string): void {
-        this.apelido = value
+    public setName(value: string): void {
+        this.name = value
     }
 
     public getEmail(): string {
@@ -53,7 +53,7 @@ export class Users{
     public toUsersModelDB(): UsersDB {
         return {
         id: this.id,
-        apelido: this.apelido,
+        name: this.name,
         email: this.email,
         password: this.password,
         created_at : this.createdAt,
@@ -63,7 +63,7 @@ export class Users{
     public toUsersBusinessModels(): UsersModels {
         return {
         id: this.id,
-        apelido: this.apelido,
+        name: this.name,
         email: this.email,
         password: this.password,
         createdAt : this.createdAt,

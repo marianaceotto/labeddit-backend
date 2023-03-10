@@ -1,6 +1,7 @@
 import { UsersDatabase } from "../database/UsersDatabase"
-import { SignupInput, SignupOutput } from "../dtos/UsersDTO"
+import { LoginInput, LoginOutput, SignupInput, SignupOutput } from "../dtos/UsersDTO"
 import { BadRequestError } from "../errors/BadRequestError"
+import { NotFoundError } from "../errors/NotFoundError"
 import { Users } from "../models/Users"
 import { HashManager } from "../services/HashManager"
 import { IdGenerator } from "../services/IdGenerator"
@@ -17,10 +18,10 @@ export class UsersBusiness {
     
     public signup = async (input: SignupInput): Promise <SignupOutput> => {
         
-        const {apelido, email, password} = input 
+        const {name, email, password} = input 
 
-        if (typeof apelido !== "string") {
-            throw new BadRequestError("'Apelido' deve ser string")
+        if (typeof name !== "string") {
+            throw new BadRequestError("'Name' deve ser string")
         }
 
         if (typeof email !== "string") {
@@ -37,7 +38,7 @@ export class UsersBusiness {
 
         const newUser = new Users (
             id,
-            apelido,
+            name,
             email, 
             hashedPassword, 
             new Date().toISOString()
@@ -49,11 +50,56 @@ export class UsersBusiness {
 
         const payload: TokenPayload = {
             id: newUser.getId(),
-            apelido: newUser.getApelido()
+            name: newUser.getName()
         }
 
         const output: SignupOutput = {
             token: this.tokenManager.createToken(payload)
+        }
+
+        return output
+    }
+
+    public login = async (input: LoginInput): Promise <LoginOutput> => {
+        const { email, password } = input
+        
+        if (typeof email !== "string") {
+            throw new BadRequestError("'Email' deve ser string")
+        }
+
+        if (typeof password !== "string") {
+            throw new BadRequestError("'Password' deve ser string")
+        }
+
+        const userDB = await this.usersDatabase.findByEmail(email)
+
+        if (!userDB) {
+            throw new NotFoundError(" 'E-mail' inválido")
+        }
+
+        const isPasswordCorrect = await this.hashManager.compare(password, userDB.password)
+
+        if (!isPasswordCorrect) {
+            throw new NotFoundError(" 'Password' inválida")
+        }
+
+        const users = new Users (
+            userDB.id,
+            userDB.name,
+            userDB.email,
+            userDB.password,
+            userDB.created_at
+        )
+
+        const payload: TokenPayload = {
+            id: users.getId(), 
+            name: users.getName()
+        }
+
+        const token=  this.tokenManager.createToken(payload)
+
+        const output: LoginOutput ={
+            token
         }
 
         return output
