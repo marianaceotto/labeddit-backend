@@ -6,7 +6,7 @@ import { BaseError } from "../errors/BaseError";
 
 export class UsersController {
     constructor (
-        private UsersBusiness: UsersBusiness
+        private usersBusiness: UsersBusiness
     ) {}
 
     public signup = async (req: Request, res: Response) => {
@@ -18,7 +18,7 @@ export class UsersController {
                 password: req.body.password
             }
 
-            const output = await this.UsersBusiness.signup(input)
+            const output = await this.usersBusiness.signup(input)
 
             res.status(201).send(output)
             
@@ -42,7 +42,7 @@ export class UsersController {
                 password: req.body.password
             }
 
-            const output = await this.UsersBusiness.login(input)
+            const output = await this.usersBusiness.login(input)
 
             res.status(200).send(output)
                         

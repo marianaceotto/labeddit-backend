@@ -1,6 +1,4 @@
-import { PostsDB, PostsModels } from "../types"
-
-
+import { PostsModels } from "../types"
 
 export interface GetPostInput {
     token: string | undefined
@@ -9,7 +7,7 @@ export interface GetPostInput {
 export type GetPostsOutput = PostsModels[]
 
 export interface CreatePostInput {
-    token: string, 
+    token: string | undefined, 
     content: unknown
 }
 
@@ -17,4 +15,10 @@ export interface LikeOrDislikeInput {
     idToLikeOrDislike: string,
     token: string, 
     like: unknown
+}
+
+export interface CreateCommentInput{
+    post_id: string,
+    comment: string,
+    token: string,
 }

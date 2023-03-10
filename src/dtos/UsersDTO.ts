@@ -1,3 +1,8 @@
+export interface getAllUsersInput {
+    q: string,
+    token: string,
+}
+
 export interface SignupInput {
     name: unknown,
     email: unknown,

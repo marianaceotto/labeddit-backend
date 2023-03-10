@@ -15,7 +15,7 @@ export class UsersBusiness {
         private tokenManager: TokenManager,
         private hashManager: HashManager
     ) {}
-    
+  
     public signup = async (input: SignupInput): Promise <SignupOutput> => {
         
         const {name, email, password} = input 
@@ -104,6 +104,5 @@ export class UsersBusiness {
 
         return output
     }
-
 
 }

@@ -4,7 +4,7 @@ export class Posts {
     constructor (
     private id: string,
     private content: string,
-    private comment: number,
+    private comment: string,
     private likes: number, 
     private dislikes: number,
     private createdAt: string,
@@ -12,7 +12,7 @@ export class Posts {
         id: string,
         name: string
     } 
-    ) {}
+    ){}
 
     public getId(): string {
         return this.id
@@ -30,11 +30,11 @@ export class Posts {
         this.content = value
     }
 
-    public getComment(): number {
+    public getComment(): string {
         return this.comment
     }
 
-    public setComment(value: number): void {
+    public setComment(value: string): void {
         this.comment = value
     }
 
