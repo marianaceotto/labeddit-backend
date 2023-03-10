@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { PostsBusiness } from "../business/PostsBusiness";
-import { GetPostInput } from "../dtos/PostsDTO";
+import { CreateCommentInput, CreatePostInput, GetPostInput } from "../dtos/PostsDTO";
 import { BaseError } from "../errors/BaseError";
 
 export class PostsController {
@@ -27,4 +27,48 @@ export class PostsController {
             }
         }
     }
+
+    public createPost = async (req: Request, res: Response) => {
+        try {
+            const input: CreatePostInput = {
+                token: req.headers.authorization,
+                content: req.body.content
+            }
+
+            await this.postsBusiness.createPost(input)
+
+            res.status(201).send("Post criado com sucesso")
+            
+        } catch (error) {
+            console.log(error)
+
+            if (error instanceof BaseError) {
+                res.status(error.statusCode).send(error.message)
+            } else {
+                res.status(500).send("Erro inesperado")
+            }
+        }
+    }
+
+    public createComment = async (req: Request, res: Response) => {
+        try {
+            const input: CreateCommentInput = {
+                post_id: req.body.post_id,
+                comment: req.body.comment,
+                token: req.headers.authorization as string,
+            }
+
+            const output = await this.postsBusiness.createComment(input)
+
+        res.status(201).send(output)
+        
+        } catch (error) {
+            if (error instanceof BaseError) {
+                res.status(error.statusCode).send(error.message)
+            } else {
+                res.status(500).send("Erro inesperado")
+            }
+        }
+    }
+
 }

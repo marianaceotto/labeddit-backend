@@ -1,3 +1,4 @@
+import { PostsDB } from "../types";
 import { BaseDatabase } from "./BaseDatabase";
 import { UsersDatabase } from "./UsersDatabase";
 
@@ -23,5 +24,20 @@ export class PostsDatabase extends BaseDatabase {
             postDB,
             userDB,
         }
+    }
+
+    public insertPost = async (postDB: PostsDB): Promise <void> => {
+        await BaseDatabase
+        .connection(PostsDatabase.TABLE_POSTS)
+        .insert(postDB)
+    }
+    
+    public getPostById = async (id: string): Promise <PostsDB | undefined> => {
+        const [result]: PostsDB[] | undefined = await BaseDatabase
+        .connection(PostsDatabase.TABLE_POSTS)
+        .select()
+        .where({id: id})
+
+        return result 
     }
 }
