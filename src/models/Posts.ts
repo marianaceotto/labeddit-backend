@@ -3,11 +3,15 @@ import { PostsDB, PostsModels } from "../types"
 export class Posts {
     constructor (
     private id: string,
-    private userId: string,
     private content: string,
+    private comment: number,
     private likes: number, 
     private dislikes: number,
-    private createdAt: string  
+    private createdAt: string,
+    private user: {
+        id: string,
+        name: string
+    } 
     ) {}
 
     public getId(): string {
@@ -18,20 +22,20 @@ export class Posts {
         this.id = value
     }
 
-    public getUserId(): string {
-        return this.userId
-    }
-
-    public setUserId(value: string): void {
-        this.userId = value
-    }
-
     public getContent(): string {
         return this.content
     }
 
     public setContent(value: string): void {
         this.content = value
+    }
+
+    public getComment(): number {
+        return this.comment
+    }
+
+    public setComment(value: number): void {
+        this.comment = value
     }
 
     public getLikes(): number {
@@ -75,11 +79,26 @@ export class Posts {
         this.createdAt = value
     }
 
+    public getUser():{
+        id: string,
+        name: string,
+    }{
+        return this.user
+    }
+
+    public setUser(value :{
+        id: string,
+        name: string,
+    }){
+        this.user = value
+    }
+
     public toModelsPostsDB(): PostsDB {
         return {
         id: this.id,
-        user_id: this.userId,
+        user_id: this.user.id,
         content: this.content,
+        comment: this.comment,
         likes: this.likes,
         dislikes: this.dislikes,
         created_at: this.createdAt
@@ -89,8 +108,9 @@ export class Posts {
     public toBusinessPostsModels(): PostsModels {
         return {
         id: this.id,
-        userId: this.userId,
+        userId: this.user.id,
         content: this.content,
+        comment: this.comment,
         likes: this.likes,
         dislikes: this.dislikes,
         createdAt: this.createdAt

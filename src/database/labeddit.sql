@@ -1,7 +1,7 @@
 -- Active: 1677690303576@@127.0.0.1@3306
 CREATE TABLE users (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
-    apelido TEXT NOT NULL,
+    name TEXT NOT NULL,
     email TEXT NOT NULL,
     password TEXT NOT NULL,
     created_at TEXT DEFAULT (DATETIME()) NOT NULL
@@ -11,6 +11,7 @@ CREATE TABLE posts (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     user_id TEXT NOT NULL,
     content TEXT NOT NULL,
+    comment INTEGER DEFAULT (0) NOT NULL,
     likes INTEGER DEFAULT (0) NOT NULL,
     dislikes INTEGER DEFAULT (0) NOT NULL,
     created_at TEXT DEFAULT (DATETIME()) NOT NULL,
@@ -66,7 +67,7 @@ DROP TABLE posts_likes_dislikes;
 DROP TABLE comments_likes_dislikes;
 
 
-INSERT INTO users (id, apelido, email, password)
+INSERT INTO users (id, name, email, password)
 VALUES
 ("u001","labaluno83", "labaluno83@email.com", "123erd"),
 ("u002","labaluno8","labaluno8@email.com","345ety"),
