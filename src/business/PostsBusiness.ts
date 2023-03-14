@@ -48,7 +48,8 @@ export class PostsBusiness {
                 postDB.likes,
                 postDB.dislikes,
                 postDB.created_at,
-                creator(postDB.user_id)
+                creator(postDB.user_id),
+                postDB.post_comment
             )
 
             return post.toBusinessPostsModels()
@@ -95,7 +96,18 @@ export class PostsBusiness {
             dislikes,
             created_at,
             {id: user_id,
-            name:payload.name}
+            name:payload.name},
+            {id: '',
+            post_id: '',
+            comment: '',
+            likes: 0,
+            dislikes: 0,
+            created_at: '',
+                user: {
+                    user_id: '',
+                    name: ''
+            }
+            }
         )
 
         const postsDB = newPost.toModelsPostsDB()
@@ -118,10 +130,6 @@ export class PostsBusiness {
             throw new BadRequestError ("'Comment' deve ser string")
         }
 
-        if (typeof post_id !== "string"){
-            throw new BadRequestError ("'Post_id' deve ser string")
-        }
-
         const payload = this.tokenManager.getPayload(token)
 
         if (payload === null) {
@@ -129,27 +137,67 @@ export class PostsBusiness {
         }
 
         const postById = await this.postsDatabase.getPostById(post_id)
+        //console.log(postById, "p002")
 
         if (!postById) {
             throw new BadRequestError ("'Post' não encontrado")
         }
 
-        // const id = this.idGenerator.generate()
-        // const comment = ""
-        // const likes = 0
-        // const dislikes = 0
-        // const created_at = new Date().toISOString()
-        // const user_id = payload.id
+        const id = this.idGenerator.generate()
+        const content = ''
+        const likes = 0
+        const dislikes = 0
+        const created_at = new Date().toISOString()
+        const user_id = payload.id
 
-        // const newPost = new Posts (
-        //     id, 
-        //     content,
-        //     comment,
-        //     likes,
-        //     dislikes,
-        //     created_at,
-        //     {id: user_id,
-        //     name:payload.name}
-        // )
+        const newComment = new Posts (
+            id, 
+            content,
+            comment,
+            likes,
+            dislikes,
+            created_at,
+            {id: user_id,
+            name:payload.name},
+            {id: '',
+            post_id: '',
+            comment: '',
+            likes: 0,
+            dislikes: 0,
+            created_at: '',
+                user: {
+                    user_id: '',
+                    name: ''
+            }
+            }
+        )
+
+        const updatePost = new Posts (
+            postById.id, 
+            postById.content,
+            postById.comment,
+            postById.likes,
+            postById.dislikes,
+            postById.created_at,
+            {id: user_id,
+            name:payload.name},
+            {id: '',
+            post_id: '',
+            comment: '',
+            likes: 0,
+            dislikes: 0,
+            created_at: '',
+                user: {
+                    user_id: '',
+                    name: ''
+            }
+            }
+        )
+        
+        const newCommentDB = newComment.toModelsCommentDB()
+        await this.postsDatabase.createComment(newCommentDB)
+
+        const newUpdatePostDB = updatePost.toModelsPostsDB() 
+        await this.postsDatabase.updatePost(newUpdatePostDB, postById.id)
     }
 }
