@@ -1,5 +1,5 @@
 import { PostsDatabase } from "../database/PostsDatabase"
-import { CreateCommentInput, CreatePostInput, GetPostInput, GetPostsOutput } from "../dtos/PostsDTO"
+import { CreateCommentInput, CreatePostInput, GetPostInput, GetPostsOutput, LikeOrDislikeInput } from "../dtos/PostsDTO"
 import { BadRequestError } from "../errors/BadRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Posts } from "../models/Posts"
@@ -200,4 +200,133 @@ export class PostsBusiness {
         const newUpdatePostDB = updatePost.toModelsPostsDB() 
         await this.postsDatabase.updatePost(newUpdatePostDB, postById.id)
     }
+
+    public likeOrDislike = async (input: LikeOrDislikeInput): Promise <void> => {
+        const { idToLikeOrDislike, token, like } = input
+
+        if (token === undefined){
+            throw new BadRequestError ("'Token' inválido")
+        }
+
+        const payload = this.tokenManager.getPayload(token)
+
+        if (payload === null) {
+            throw new BadRequestError ("'Token' inválido")
+        }
+
+        if( typeof like !== "boolean"){
+            throw new BadRequestError("'Like' deve ser boolean")
+        }
+
+        const postToLike = await this.postsDatabase.getPostById(idToLikeOrDislike)
+        const commentToLike = await this.postsDatabase.getCommentById(idToLikeOrDislike)
+        //const idlikeDislike = await this.postsDatabase.likeOrDislike(payload.id, idToLikeOrDislike)
+
+        if(!postToLike) {
+            throw new BadRequestError("'id' não encontrado")
+        }
+
+        if(!commentToLike) {
+            throw new BadRequestError("'id' não encontrado")
+        }
+
+        //Like/Dislike do Post
+
+        if (postToLike) {
+            let like = postToLike.likes
+            let dislikes = postToLike.dislikes
+
+            if (like === 0){
+                dislikes++
+            } else if (like === 1){
+                like++
+            } else {
+                throw new BadRequestError("Você não pode fazer duas ações")
+            }
+        }
+
+        const postLiked = new Posts (
+            idToLikeOrDislike, 
+            postToLike.content,
+            postToLike.comment,
+            postToLike.likes,
+            postToLike.dislikes,
+            postToLike.created_at,
+            {id: postToLike.user_id,
+            name:payload.name},
+            {id: '',
+            post_id: '',
+            comment: '',
+            likes: 0,
+            dislikes: 0,
+            created_at: '',
+                user: {
+                    user_id: '',
+                    name: ''
+            }
+            }
+        )
+
+        const userId = payload.id
+        const likesSended = like ? 1 : 0
+
+        const updateLikePost = {
+            user_id: userId,
+            post_id: idToLikeOrDislike,
+            like: likesSended
+        }
+
+        const postLikedDB = postLiked.toModelsPostsDB()
+        await this.postsDatabase.updatePost(postLikedDB, idToLikeOrDislike)
+        await this.postsDatabase.updateLikeOrDislikePost(updateLikePost)
+
+
+        //Like/Dislike do Comment
+
+        if (commentToLike) {
+            let like = commentToLike.likes
+            let dislikes = commentToLike.dislikes
+
+            if (like === 0){
+                dislikes++
+            } else if (like === 1){
+                like++
+            } else {
+                throw new BadRequestError("Você não pode fazer duas ações")
+            }
+        }
+
+        const commentLiked = new Posts (
+            idToLikeOrDislike, 
+            commentToLike.content,
+            commentToLike.comment,
+            commentToLike.likes,
+            commentToLike.dislikes,
+            commentToLike.created_at,
+            {id: commentToLike.user_id,
+            name:payload.name},
+            {id: '',
+            post_id: '',
+            comment: '',
+            likes: 0,
+            dislikes: 0,
+            created_at: '',
+                user: {
+                    user_id: '',
+                    name: ''
+            }
+            }
+        )
+
+        const updateLikeComment = {
+            user_id: userId,
+            comment_id: idToLikeOrDislike,
+            like: likesSended
+        }
+
+        const commentLikedDB = commentLiked.toModelsPostsDB()
+        await this.postsDatabase.updateComment(commentLikedDB, idToLikeOrDislike)
+        await this.postsDatabase.updateLikeOrDislikeComment(updateLikeComment)
+    }
 }
+

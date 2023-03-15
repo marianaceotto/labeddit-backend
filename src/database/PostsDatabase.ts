@@ -1,4 +1,4 @@
-import { CommentsDB, PostsDB } from "../types";
+import { CommentsDB, CommentsLikesDislikesDB, PostsDB, PostsLikesDislikesDB } from "../types";
 import { BaseDatabase } from "./BaseDatabase";
 import { UsersDatabase } from "./UsersDatabase";
 
@@ -6,6 +6,8 @@ export class PostsDatabase extends BaseDatabase {
     public static TABLE_POSTS = "posts"
     public static TABLE_USERS = "users"
     public static TABLE_COMMENTS = "comments"
+    public static TABLE_POSTS_LIKESDISLIKES = "posts_likes_dislikes"
+    public static TABLE_COMMENTS_LIKESDISLIKES = "comments_likes_dislikes"
 
     public getAllPosts = async () => {
         const result = await BaseDatabase
@@ -53,5 +55,33 @@ export class PostsDatabase extends BaseDatabase {
         .connection(PostsDatabase.TABLE_POSTS)
         .update(newUpdatePostDB)
         .where({ id: id })
+    }
+
+    public getCommentById = async (id: string): Promise <PostsDB | undefined> => {
+        const result: PostsDB[] | undefined = await BaseDatabase
+        .connection(PostsDatabase.TABLE_COMMENTS)
+        .select()
+        .where({post_id: id})
+
+        return result [0]
+    }
+
+    public updateLikeOrDislikePost = async (updateLikePost: PostsLikesDislikesDB) => {
+        await BaseDatabase
+        .connection(PostsDatabase.TABLE_POSTS_LIKESDISLIKES)
+        .insert(updateLikePost)
+    }
+
+    public updateComment = async (updateComment: PostsDB, id: string) => {
+        await BaseDatabase
+        .connection(PostsDatabase.TABLE_COMMENTS)
+        .update(updateComment)
+        .where ({id: id})
+    }
+
+    public updateLikeOrDislikeComment= async (updateLikeComment: CommentsLikesDislikesDB) => {
+        await BaseDatabase
+        .connection(PostsDatabase.TABLE_COMMENTS_LIKESDISLIKES)
+        .insert(updateLikeComment)
     }
 }

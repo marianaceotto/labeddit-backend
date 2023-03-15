@@ -62,7 +62,6 @@ export interface CommentsDB {
     created_at: string,
 }
 
-
 export interface CommentsModels  {
     id: string,
     userId: string,
