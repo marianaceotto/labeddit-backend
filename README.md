@@ -20,4 +20,5 @@ O labeddit é um projeto Full Stack proposto pelo bootcamp da Labenu, dividido e
 
 ## 📫 Contato
 E-mail: marianaceott@gmail.com
+
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/mariana-ceotto)
